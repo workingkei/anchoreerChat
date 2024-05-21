@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.task.anchoreerchat.dto.ChatMessageReq;
 import org.task.anchoreerchat.service.ChatService;
@@ -23,11 +22,5 @@ public class ChatController {
         return chatMessageReq; // 메시지를 받아 그대로 전송
     }
 
-    @MessageMapping("/chat/{chatRoomId}/addUser")
-    @SendTo("/topic/{chatRoomId}")
-    public ChatMessageReq addUser(@DestinationVariable String chatRoomId
-            , ChatMessageReq chatMessageReq, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("username", chatMessageReq.getSender());
-        return chatMessageReq;
-    }
+
 }

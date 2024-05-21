@@ -1,13 +1,13 @@
 package org.task.anchoreerchat.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import org.task.anchoreerchat.domain.ChatMessage;
 import org.task.anchoreerchat.enums.MessageType;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 public class ChatMessageReq {
 
     @Setter

@@ -59,7 +59,18 @@
         document.getElementById('chat-messages').appendChild(messageElement);
     }
 
+    function loadHistory() {
+        fetch(`/api/chat/${chatRoomId}/history`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(message => {
+                    showMessage(`${message.sender}: ${message.content}`);
+                });
+            });
+    }
+    loadHistory();
     connect();
+
 </script>
 </body>
 </html>

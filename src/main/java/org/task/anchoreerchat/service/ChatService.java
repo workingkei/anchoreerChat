@@ -7,6 +7,9 @@ import org.task.anchoreerchat.domain.ChatMessageRepository;
 import org.task.anchoreerchat.domain.ChatRoom;
 import org.task.anchoreerchat.domain.ChatRoomRepository;
 import org.task.anchoreerchat.dto.ChatMessageReq;
+import org.task.anchoreerchat.dto.ChatMessageRes;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -21,5 +24,12 @@ public class ChatService {
 
     public ChatMessage saveMessage(ChatMessageReq chatMessageReq) {
         return chatMessageRepository.save(chatMessageReq.toEntity());
+    }
+
+    public List<ChatMessageRes> loadChatHistory(String chatRoomId) {
+        List<ChatMessage> chatMessageList = chatMessageRepository.findAllByChatRoomId(chatRoomId);
+        return chatMessageList.stream()
+                .map(ChatMessageRes::new)
+                .toList();
     }
 }
