@@ -1,6 +1,7 @@
 package org.task.anchoreerchat.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -14,16 +15,18 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessageReq sendMessage(ChatMessageReq chatMessageReq) {
+    @MessageMapping("/chat/{chatRoomId}/sendMessage")
+    @SendTo("/topic/{chatRoomId}")
+    public ChatMessageReq sendMessage(@DestinationVariable String chatRoomId, ChatMessageReq chatMessageReq) {
+        chatMessageReq.setChatRoomId(chatRoomId); // 채팅방 주소 설정
         chatService.saveMessage(chatMessageReq); // 메시지 저장
         return chatMessageReq; // 메시지를 받아 그대로 전송
     }
 
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public ChatMessageReq addUser(ChatMessageReq chatMessageReq, SimpMessageHeaderAccessor headerAccessor) {
+    @MessageMapping("/chat/{chatRoomId}/addUser")
+    @SendTo("/topic/{chatRoomId}")
+    public ChatMessageReq addUser(@DestinationVariable String chatRoomId
+            , ChatMessageReq chatMessageReq, SimpMessageHeaderAccessor headerAccessor) {
         headerAccessor.getSessionAttributes().put("username", chatMessageReq.getSender());
         return chatMessageReq;
     }

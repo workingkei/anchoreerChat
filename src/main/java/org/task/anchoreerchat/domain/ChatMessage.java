@@ -18,7 +18,7 @@ public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long chatRoomId;
+    private String chatRoomId;
     private String content;
     private String sender;
     private LocalDateTime timestamp;
@@ -26,7 +26,7 @@ public class ChatMessage {
     private MessageType type;
 
     @Builder
-    public ChatMessage(Long chatRoomId, String content, String sender, LocalDateTime timestamp, MessageType type) {
+    public ChatMessage(String chatRoomId, String content, String sender, LocalDateTime timestamp, MessageType type) {
         this.chatRoomId = chatRoomId;
         this.content = content;
         this.sender = sender;

@@ -15,6 +15,7 @@
 </div>
 
 <script type="text/javascript">
+    var chatRoomId = '123'; // 임시
     var stompClient = null;
 
     function getRandomUser() {
@@ -36,7 +37,7 @@
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/public', function (message) {
+            stompClient.subscribe(`/topic/${chatRoomId}`, function (message) {
                 var {sender, type, content} = JSON.parse(message.body);
                 showMessage(`${sender}: ${content}`);
             });
@@ -47,7 +48,7 @@
         var messageContent = document.getElementById('chat-message-input').value;
         if(messageContent) {
             var sender = getUserName(); // 세션 스토리지에서 사용자 이름 가져오기
-            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({sender, type: 'CHAT', content: messageContent}));
+            stompClient.send(`/app/chat/${chatRoomId}/sendMessage`, {}, JSON.stringify({sender, type: 'CHAT', content: messageContent}));
         }
         document.getElementById('chat-message-input').value = '';
     }
