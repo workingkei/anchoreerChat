@@ -10,12 +10,26 @@
     <div id="chat-messages">
         <!-- 채팅 메시지 출력 -->
     </div>
-    <input type="text" id="chat-message-input" placeholder="Type a message..."/>
+    <input type="text" id="chat-message-input" placeholder="Type a message..." onkeypress="if(event.keyCode===13) sendMessage()"/>
     <button onclick="sendMessage()">Send</button>
 </div>
 
 <script type="text/javascript">
     var stompClient = null;
+
+    function getRandomUser() {
+        var randomNum = Math.floor(Math.random() * 1000); // 0 ~ 999 사이의 랜덤한 숫자 생성
+        return "User" + randomNum; // "User"에 랜덤한 숫자를 붙여 반환
+    }
+
+    function getUserName() {
+        var userName = sessionStorage.getItem('userName');
+        if (!userName) {
+            userName = getRandomUser();
+            sessionStorage.setItem('userName', userName);
+        }
+        return userName;
+    }
 
     function connect() {
         var socket = new SockJS('/ws');
@@ -23,7 +37,8 @@
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/public', function (message) {
-                showMessage(JSON.parse(message.body).content);
+                var {sender, type, content} = JSON.parse(message.body);
+                showMessage(`${sender}: ${content}`);
             });
         });
     }
@@ -31,8 +46,10 @@
     function sendMessage() {
         var messageContent = document.getElementById('chat-message-input').value;
         if(messageContent) {
-            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({sender: "User1", type: 'CHAT', content: messageContent}));
+            var sender = getUserName(); // 세션 스토리지에서 사용자 이름 가져오기
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({sender, type: 'CHAT', content: messageContent}));
         }
+        document.getElementById('chat-message-input').value = '';
     }
 
     function showMessage(message) {
