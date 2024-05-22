@@ -25,7 +25,8 @@
                 listElement.innerHTML = '';
                 data.forEach(room => {
                     const roomElement = document.createElement('div');
-                    roomElement.innerHTML = `<a href="/chat/${room.chatRoomId}">${room.title}</a> - <span id="roomLast${room.chatRoomId}">${room.lastMessage}</span>`;
+                    roomElement.innerHTML = `<a href="/chat/${room.chatRoomId}">${room.title}</a> - <span id="roomLast${room.chatRoomId}">${room.lastMessage}</span>
+                    (<span id="userActivityCount${room.chatRoomId}">${room.userActivityCount}</span>)`;
                     listElement.appendChild(roomElement);
                 });
             });
@@ -57,6 +58,11 @@
                 console.log('message', message.body);
                 var {chatRoomId, sender, type, content} = JSON.parse(message.body);
                 document.getElementById(`roomLast${chatRoomId}`).innerText = `${content}`;
+            });
+            stompClient.subscribe('/topic/userActivityCount', function (message) {
+                console.log('message', message.body);
+                var {chatRoomId, userActivityCount} = JSON.parse(message.body);
+                document.getElementById(`userActivityCount${chatRoomId}`).innerText = `${userActivityCount}`;
             });
         });
     }

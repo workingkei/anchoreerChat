@@ -15,6 +15,10 @@
     <input type="text" id="chat-message-input" placeholder="Type a message..." onkeypress="if(event.keyCode===13) sendMessage()"/>
     <button onclick="sendMessage()">Send</button>
 </div>
+<br>
+<br>
+<a href="/">목록으로</a>
+
 
 <script type="text/javascript">
     var chatRoomId = '{{chatRoomId}}';
@@ -46,7 +50,9 @@
                 var {sender, type, content} = JSON.parse(message.body);
                 showMessage(`${sender}: ${content}`);
             });
+            stompClient.send(`/app/chat/${chatRoomId}/addUser`, {}, JSON.stringify({sender}));
         });
+
     }
 
     function sendMessage() {

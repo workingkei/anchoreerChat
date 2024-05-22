@@ -2,10 +2,7 @@ package org.task.anchoreerchat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.task.anchoreerchat.domain.ChatMessage;
-import org.task.anchoreerchat.domain.ChatMessageRepository;
-import org.task.anchoreerchat.domain.ChatRoom;
-import org.task.anchoreerchat.domain.ChatRoomRepository;
+import org.task.anchoreerchat.domain.*;
 import org.task.anchoreerchat.dto.ChatMessageReq;
 import org.task.anchoreerchat.dto.ChatMessageRes;
 import org.task.anchoreerchat.dto.ChatRoomRes;
@@ -19,6 +16,7 @@ public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final UserActivityRepository userActivityRepository;
 
     public ChatRoom createRoom(String title) {
         return chatRoomRepository.save(ChatRoom.builder().title(title).build());
@@ -42,8 +40,29 @@ public class ChatService {
     }
 
     public List<ChatRoomRes> getChatRooms() {
-        return chatRoomRepository.findAll().stream()
+        List<ChatRoomRes> chatRoomResList = new java.util.ArrayList<>(chatRoomRepository.findAll().stream()
                 .map(ChatRoomRes::new)
-                .toList();
+                .toList());
+        List<UserActivity> userActivityList = userActivityRepository.findAllByChatRoomIdIn(chatRoomResList.stream()
+                .map(ChatRoomRes::getChatRoomId)
+                .toList());
+
+        chatRoomResList.forEach(chatRoomRes -> {
+            chatRoomRes.setUserActivityCount(userActivityList.stream()
+                    .filter(userActivity -> Long.parseLong(userActivity.getChatRoomId()) == (chatRoomRes.getChatRoomId()))
+                    .filter(userActivity -> userActivity.getLastConnectedAt().isAfter(LocalDateTime.now().minusMinutes(30)))
+                    .count());
+        });
+
+        chatRoomResList.sort((o1, o2) -> (int) (o2.getUserActivityCount() - o1.getUserActivityCount()));
+        return chatRoomResList;
+    }
+
+    public void saveUserActivity(String chatRoomId, String sessionId, String userId) {
+        userActivityRepository.save(UserActivity.builder()
+                .chatRoomId(chatRoomId)
+                .sessionId(sessionId)
+                .userId(userId)
+                .build());
     }
 }

@@ -1,5 +1,6 @@
 package org.task.anchoreerchat.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.task.anchoreerchat.domain.ChatMessage;
@@ -25,5 +26,13 @@ public class ChatMessageReq {
                 .sender(sender)
                 .timestamp(LocalDateTime.now())
                 .build();
+    }
+
+    @Builder
+    public ChatMessageReq(String chatRoomId, MessageType type, String content, String sender) {
+        this.chatRoomId = chatRoomId;
+        this.type = type;
+        this.content = content;
+        this.sender = sender;
     }
 }
