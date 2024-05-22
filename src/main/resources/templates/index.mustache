@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>채팅방 목록</title>
+</head>
+<body>
+<div id="chatRoomsList"></div>
+<br>
+<br>
+<div>
+    <label for="roomName">채팅방 이름</label>
+    <input type="text" id="roomName" onkeydown="if(event.keyCode == 13) saveChatRoom()">
+    <button onclick="saveChatRoom()" >채팅방 생성</button>
+</div>
+
+<script>
+    function getChatRooms() {
+        fetch('/api/chat/rooms')
+            .then(response => response.json())
+            .then(data => {
+                console.log('data', data);
+                const listElement = document.getElementById('chatRoomsList');
+                listElement.innerHTML = '';
+                data.forEach(room => {
+                    const roomElement = document.createElement('div');
+                    roomElement.innerHTML = `<strong>${room.title}</strong> - ${room.lastMessage}`;
+                    listElement.appendChild(roomElement);
+                });
+            });
+    }
+
+    function saveChatRoom() {
+        const roomName = document.getElementById('roomName').value;
+        fetch('/api/chat/rooms', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title: roomName })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('data', data);
+                document.getElementById('roomName').value = '';
+                getChatRooms();
+            });
+    }
+
+    getChatRooms();
+</script>
+</body>
+</html>

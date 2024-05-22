@@ -18,3 +18,8 @@ server:
   servlet:
     encoding:
       force-response: true
+  devtools:
+    livereload:
+      enabled: true
+  mustache:
+    cache: false

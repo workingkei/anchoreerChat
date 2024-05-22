@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @ToString
 @Getter
 @NoArgsConstructor
@@ -17,11 +19,15 @@ public class ChatRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+    private Long chatRoomId;
+    private String title; // 채팅방 제목
+    private String lastMessage; // 최근 메시지 내용
+    private LocalDateTime lastMessageTime; // 최근 메시지 시각
 
     @Builder
-    public ChatRoom(String name) {
-        this.name = name;
+    public ChatRoom(String title, String lastMessage, LocalDateTime lastMessageTime) {
+        this.title = title;
+        this.lastMessage = lastMessage;
+        this.lastMessageTime = lastMessageTime;
     }
 }

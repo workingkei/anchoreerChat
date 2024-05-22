@@ -6,6 +6,8 @@
     <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 </head>
 <body>
+<h1>Chat Room</h1>
+<h1 id="user-name">username</h1>
 <div id="chat-page">
     <div id="chat-messages">
         <!-- 채팅 메시지 출력 -->
@@ -28,9 +30,12 @@
         if (!userName) {
             userName = getRandomUser();
             sessionStorage.setItem('userName', userName);
+            document.getElementById('user-name').innerText = userName;
         }
         return userName;
     }
+
+    var sender = getUserName(); // 세션 스토리지에서 사용자 이름 가져오기
 
     function connect() {
         var socket = new SockJS('/ws');
@@ -47,7 +52,6 @@
     function sendMessage() {
         var messageContent = document.getElementById('chat-message-input').value;
         if(messageContent) {
-            var sender = getUserName(); // 세션 스토리지에서 사용자 이름 가져오기
             stompClient.send(`/app/chat/${chatRoomId}/sendMessage`, {}, JSON.stringify({sender, type: 'CHAT', content: messageContent}));
         }
         document.getElementById('chat-message-input').value = '';
@@ -68,6 +72,8 @@
                 });
             });
     }
+
+
     loadHistory();
     connect();
 
