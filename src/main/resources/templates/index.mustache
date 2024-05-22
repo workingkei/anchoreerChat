@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>채팅방 목록</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 </head>
 <body>
 <div id="chatRoomsList"></div>
@@ -23,7 +25,7 @@
                 listElement.innerHTML = '';
                 data.forEach(room => {
                     const roomElement = document.createElement('div');
-                    roomElement.innerHTML = `<a href="/chat/${room.chatRoomId}">${room.title}</a> - ${room.lastMessage}`;
+                    roomElement.innerHTML = `<a href="/chat/${room.chatRoomId}">${room.title}</a> - <span id="roomLast${room.chatRoomId}">${room.lastMessage}</span>`;
                     listElement.appendChild(roomElement);
                 });
             });
@@ -46,7 +48,22 @@
             });
     }
 
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/lastMessage', function (message) {
+                console.log('message', message.body);
+                var {chatRoomId, sender, type, content} = JSON.parse(message.body);
+                document.getElementById(`roomLast${chatRoomId}`).innerText = `${content}`;
+            });
+        });
+    }
+
+
     getChatRooms();
+    connect();
 </script>
 </body>
 </html>

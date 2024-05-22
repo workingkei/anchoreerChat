@@ -30,4 +30,9 @@ public class ChatRoom {
         this.lastMessage = lastMessage;
         this.lastMessageTime = lastMessageTime;
     }
+
+    public void updateLastMessage(String message, LocalDateTime time) {
+        this.lastMessage = message;
+        this.lastMessageTime = time;
+    }
 }
