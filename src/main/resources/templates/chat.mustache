@@ -17,7 +17,7 @@
 </div>
 
 <script type="text/javascript">
-    var chatRoomId = '123'; // 임시
+    var chatRoomId = '{{chatRoomId}}';
     var stompClient = null;
 
     function getRandomUser() {
@@ -65,12 +65,12 @@
 
     function loadHistory() {
         fetch(`/api/chat/${chatRoomId}/history`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(message => {
-                    showMessage(`${message.sender}: ${message.content}`);
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(message => {
+                        showMessage(`${message.sender}: ${message.content}`);
+                    });
                 });
-            });
     }
 
 

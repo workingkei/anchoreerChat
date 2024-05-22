@@ -23,7 +23,7 @@
                 listElement.innerHTML = '';
                 data.forEach(room => {
                     const roomElement = document.createElement('div');
-                    roomElement.innerHTML = `<strong>${room.title}</strong> - ${room.lastMessage}`;
+                    roomElement.innerHTML = `<a href="/chat/${room.chatRoomId}">${room.title}</a> - ${room.lastMessage}`;
                     listElement.appendChild(roomElement);
                 });
             });
